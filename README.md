@@ -1,6 +1,6 @@
 # Summary
 
-This is a chainloader for easing Litex FPGA TFTP bootloading workflow when your files change sizes frequently, or you are heavily iterating making changes to your boot environment (including changing file destination addresses) and you don't want to regenerate your FPGA bitstream every time you add, remove, rename, relocate (in memory) or resize a file. This has only been tested with the vexrisc / arty port, but conceptually at least it should cross over to the other cpu's and OS's.
+This is a chainloader for easing Litex FPGA TFTP bootloading workflow when your files change sizes frequently, or you are heavily iterating making changes to your boot environment (including changing file destination addresses) and you don't want to regenerate your FPGA bitstream every time you add, remove, rename, relocate (in memory) or resize a file. This has only been tested with the vexrisc / arty / linux port, but conceptually at least it should cross over to the other cpu's and OS's.
 
 
 # To Build:
