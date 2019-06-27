@@ -7,7 +7,7 @@ INCLUDE generated/regions.ld
 
 MEMORY
 {
-    chloader_loc : ORIGIN = 0xcff00000, LENGTH = 0x00100000
+    CHAINLOADER_BIN : ORIGIN = 0xcff00000, LENGTH = 0x00100000
 }
 
 SECTIONS
@@ -17,19 +17,19 @@ SECTIONS
 		_ftext = .;
 		*(.text .stub .text.* .gnu.linkonce.t.*)
 		_etext = .;
-	} > chloader_loc
+	} > CHAINLOADER_BIN
 
 
 	.got :
 	{
 		_GLOBAL_OFFSET_TABLE_ = .;
 		*(.got)
-	} > chloader_loc
+	} > CHAINLOADER_BIN
 
 	.got.plt :
 	{
 		*(.got.plt)
-	} > chloader_loc
+	} > CHAINLOADER_BIN
 
 	.rodata :
 	{
@@ -38,7 +38,7 @@ SECTIONS
 		*(.rodata .rodata.* .gnu.linkonce.r.*)
 		*(.rodata1)
 		_erodata = .;
-	} > chloader_loc
+	} > CHAINLOADER_BIN
 
 	.data :
 	{
@@ -48,7 +48,7 @@ SECTIONS
 		*(.data1)
 		*(.sdata .sdata.* .gnu.linkonce.s.*)
 		_edata = .;
-	} > chloader_loc
+	} > CHAINLOADER_BIN
 
 	.bss :
 	{
@@ -64,7 +64,7 @@ SECTIONS
 		_ebss = .;
 		. = ALIGN(8);
 		_heapstart = .;
-	} > chloader_loc
+	} > CHAINLOADER_BIN
 }
 
-PROVIDE(_fstack = ORIGIN(chloader_loc) + LENGTH(chloader_loc) - 4);
+PROVIDE(_fstack = ORIGIN(CHAINLOADER_BIN) + LENGTH(CHAINLOADER_BIN) - 4);
