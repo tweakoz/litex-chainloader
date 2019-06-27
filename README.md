@@ -35,7 +35,7 @@ end
 
 
   * run TFTP server (one is included)
-     if using the included TFTP server, place files in a subdirectory named after a 'class' eg - arty. The included tftp server will route different folders different hosts based on the internal ip->class dictionary.
+     if using the included TFTP server, place files in a subdirectory named after a 'class' eg - arty. The included tftp server will route different folders different hosts based on the internal ip->class dictionary. Presumably this behaviour could be used to target specific devices with different software images.
 
   * boot up the fpga bitstream.
 
