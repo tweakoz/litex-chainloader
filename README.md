@@ -7,7 +7,7 @@ This is a chainloader for easing Litex FPGA TFTP bootloading workflow when your 
 * set SOC_BUILD_DIR env var to the output dir of your soc's build products (where the gateware and software output directories are)
 * set CHAINLOADER_BIN in chainloader.ld to match your system (there is a TODO below to make this dynamic)
 * run make
-* Alternatively: ```SOC_BUILD_DIR=path_to_my_soc_build_dir make```
+* Alternatively: ```SOC_BUILD_DIR=path/to/my/soc/build/dir make```
 
 # To Use:
   *  generate a boot.manifest which should look something like the below. The boot.manifest is the list of files the netbooter will pull from the TFTP server, each file's destination address and and length. I generate this as a part of the build process.
