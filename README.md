@@ -10,7 +10,7 @@ This is a chainloader for easing Litex FPGA TFTP bootloading workflow when your 
 * Alternatively: ```SOC_BUILD_DIR=path/to/my/soc/build/dir make```
 
 # To Use:
-  *  generate a boot.manifest which should look something like the snippet below. The boot.manifest is the list of files that the netbooter will pull from the TFTP server. It also includes each file's destination address and and length. I generate this as a part of the build process. Make sure to pdate it whenever rebuilding buildroot, emulator.bin or your SOC.
+  *  generate a boot.manifest which should look something like the snippet below. The boot.manifest is the list of files that the netbooter will pull from the TFTP server. It also includes each file's destination address and and length. I generate this as a part of the build process. Make sure to regenerate it whenever rebuilding buildroot, emulator.bin, your SOC or your devicetree.
   
 ```
 download emulator.bin 0x20000000 8776
