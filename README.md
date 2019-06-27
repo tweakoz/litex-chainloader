@@ -45,5 +45,7 @@ end
 
   * improve cross platform story
   * Some of the code was copied out of the Litex bios. Perhaps we can integrate it back in.
+  * IP addresses are hard coded (for TFTP server and client).
+  * IP addresses are fixed in the bitstream. Short of DHCP which sounds complicated - not sure how to fix this, atm..
   * probably could get the flash booter using the manifest also.
   * add hashes to the manifest ?
