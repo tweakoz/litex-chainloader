@@ -16,39 +16,39 @@ extern "C" {
 ////////////////////////////////////////////////////////////////////////////////
 static void __attribute__((noreturn)) boot(unsigned long r1, unsigned long r2, unsigned long r3, unsigned long addr)
 {
-  	printf("\e[30;93m############################################\e[0m\n");
-	printf("\e[30;93m# ChainLoading addr<0x%08x>\e[0m\n", addr );
-	printf("\e[30;93m############################################\e[0m\n");
-	uart_sync();
-	irq_setmask(0);
-	irq_setie(0);
-	// FIXME: understand why flushing icache on Vexriscv make boot fail
-	// flush_cpu_icache(); // __vexriscv__ does not like this
-	flush_cpu_dcache();
-	flush_l2_cache();
-	boot_helper(r1, r2, r3, addr);
-	while(1);
+    printf("\e[30;93m############################################\e[0m\n");
+    printf("\e[30;93m# ChainLoading addr<0x%08x>\e[0m\n", addr );
+    printf("\e[30;93m############################################\e[0m\n");
+    uart_sync();
+    irq_setmask(0);
+    irq_setie(0);
+    // FIXME: understand why flushing icache on Vexriscv make boot fail
+    // flush_cpu_icache(); // __vexriscv__ does not like this
+    flush_cpu_dcache();
+    flush_l2_cache();
+    boot_helper(r1, r2, r3, addr);
+    while(1);
 }
 ////////////////////////////////////////////////////////////////////////////////
 static size_t _tftp_get_v( uint32_t remote_ip,
-	                       uint16_t remote_port,
-					       const char* filename,
-						   uint8_t* buffer,
+                           uint16_t remote_port,
+                           const char* filename,
+                           uint8_t* buffer,
                            size_t expectedlen )
 {
     while(true){
         size_t r = tftp::get(remote_ip, remote_port, filename, buffer, expectedlen);
         printf( "got<%zu>\n", r );
-		if(expectedlen and r==expectedlen){
-			printf("Successfully downloaded %zu bytes from %s over TFTP\n", r, filename);
+        if(expectedlen and r==expectedlen){
+            printf("Successfully downloaded %zu bytes from %s over TFTP\n", r, filename);
             return r;
         }
         else if(expectedlen==0 and r>0){
             printf("Successfully downloaded %zu bytes from %s over TFTP\n", r, filename);
             return r;
         }
-		else
-			printf("Unable to download %s over TFTP, retying...\n", filename);
+        else
+            printf("Unable to download %s over TFTP, retying...\n", filename);
     }
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,18 +90,18 @@ static constexpr int TFTP_SERVER_PORT = 6069;
 ////////////////////////////////////////////////////////////////////////////////
 void _netboot(void)
 {
-	printf("ChainLoading from network...\n");
-	printf("Local IP : %d.%d.%d.%d\n", LOCALIP[0], LOCALIP[1], LOCALIP[2], LOCALIP[3]);
-	printf("Remote IP: %d.%d.%d.%d\n", REMOTEIP[0], REMOTEIP[1], REMOTEIP[2], REMOTEIP[3]);
+    printf("ChainLoading from network...\n");
+    printf("Local IP : %d.%d.%d.%d\n", LOCALIP[0], LOCALIP[1], LOCALIP[2], LOCALIP[3]);
+    printf("Remote IP: %d.%d.%d.%d\n", REMOTEIP[0], REMOTEIP[1], REMOTEIP[2], REMOTEIP[3]);
 
-	uint32_t local_ip = IPTOINT(LOCALIP[0], LOCALIP[1], LOCALIP[2], LOCALIP[3]);
+    uint32_t local_ip = IPTOINT(LOCALIP[0], LOCALIP[1], LOCALIP[2], LOCALIP[3]);
     uint32_t remote_ip = IPTOINT(REMOTEIP[0], REMOTEIP[1], REMOTEIP[2], REMOTEIP[3]);
 
     udp::eth_init();
 
-	udp::start(_macadr,local_ip);
-	uint16_t tftp_port = TFTP_SERVER_PORT;
-	printf("Fetching from: UDP/%d\n", tftp_port);
+    udp::start(_macadr,local_ip);
+    uint16_t tftp_port = TFTP_SERVER_PORT;
+    printf("Fetching from: UDP/%d\n", tftp_port);
 
     ////////////////////////////////////////////////////
     // parse manifest
