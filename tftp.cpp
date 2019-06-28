@@ -127,7 +127,7 @@ static void rx_callback( uint32_t src_ip,
             else {
                 length -= 4;
                 int offset = (block-1)*KBLOCK_SIZE;
-                for(uint32_t i=0;i<length;i++)
+                for(size_t i=0;i<length;i++)
                     _dst_buffer[offset+i] = datau8[i+4];
                 _total_length += length;
                 //////////////////////////
