@@ -34,10 +34,6 @@ ${OUTDIR}/%.o : %.cpp makefile
 
 ###############################################################################
 
-${OUTDIR}/boot.o: $(SOC_DIRECTORY)/software/bios/boot.c makefile
-	riscv64-unknown-elf-gcc \
-		$(INCDIRS) $(CCFLAGS) -c -o $@ $(SOC_DIRECTORY)/software/bios/boot.c
-
 ${OUTDIR}/boot-helper.o: $(SOC_DIRECTORY)/software/bios/boot-helper-vexriscv.S makefile
 	riscv64-unknown-elf-gcc \
 		$(INCDIRS) $(CCFLAGS) -c -o $@ $(SOC_DIRECTORY)/software/bios/boot-helper-vexriscv.S
