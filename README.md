@@ -1,10 +1,10 @@
 # Summary
 
-This is a chainloader for easing Litex FPGA TFTP bootloading workflow when you frequently run into on of the following:
+This is a chainloader for easing Litex FPGA TFTP bootloading workflow when you frequently run into any of the following:
 * Your software image files change size.
 * Your software image files change destination address.
 * You add or remove software image files.
-* Any other conditions that require you to regenerate your FPGA bitstream due to software being embedded within it.
+* Other conditions that require you to regenerate your FPGA bitstream due to software being embedded within it.
 
 This has only been tested with the VexRiscV / Arty / Linux port, but conceptually at least it should cross over to the other cpu's and OS's.
 
