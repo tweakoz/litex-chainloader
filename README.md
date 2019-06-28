@@ -16,7 +16,7 @@ This has only been tested with the VexRiscV / Arty / Linux port, but conceptuall
     * ***SOC_TFTP_SERVER_PORT*** : 69 (or whatever you wish)
 
 
-* Set ***chloader_loc*** in chainloader.ld to match your system (there is a TODO below to make this dynamic)
+* Set ***CHAINLOADER_BIN*** in chainloader.ld to match your system (there is a TODO below to make this dynamic)
 
 * run make
 
