@@ -4,8 +4,9 @@
 
 namespace tftp {
 
-    typedef const char* c_str_t;
-    int get(uint32_t ip, uint16_t server_port, c_str_t filename, uint8_t* outbuffer, uint32_t expected_len );
-    int tftp_put(uint32_t ip, uint16_t server_port, c_str_t filename, const uint8_t* buffer, uint32_t size );
+    typedef const char* cstr_t;
+    size_t get(uint32_t ip, uint16_t server_port, cstr_t filename, void* outbuffer, size_t expected_len );
+
+    constexpr size_t STATUS_FETCH_ERR = 0xffffffff;
 
 } // namespace tftp

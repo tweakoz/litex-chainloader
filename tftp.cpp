@@ -17,8 +17,8 @@ namespace tftp {
 // constants
 /////////////////////////////////////////////////////////
 
-static constexpr uint16_t PORT_IN = 7642;  // Local TFTP client port (arbitrary)
-static constexpr int BLOCK_SIZE = 512;     // block size in bytes
+static constexpr uint16_t KPORT_IN = 7642;  // Local TFTP client port (arbitrary)
+static constexpr size_t KBLOCK_SIZE = 512;     // block size in bytes
 
 /////////////////////////////////////////////////////////
 
@@ -75,21 +75,21 @@ static int format_data(uint8_t* buf, uint16_t block, const void* data, int len)
 
 /////////////////////////////////////////////////////////
 
-static uint8_t* packet_data = nullptr;
-static uint8_t* dst_buffer = nullptr;
-static uint32_t total_length = 0;
-static uint32_t expected_length = 0;
-static int last_ack = 0; // signed, so we can use -1
-static uint16_t data_port = 0;
-static bool transfer_finished = false;
+static uint8_t* _packet_data = nullptr;
+static uint8_t* _dst_buffer = nullptr;
+static uint32_t _total_length = 0;
+static uint32_t _expected_length = 0;
+static int _last_ack = 0; // signed, so we can use -1
+static uint16_t _data_port = 0;
+static bool _transfer_finished = false;
 
 /////////////////////////////////////////////////////////
 
 static void rx_callback( uint32_t src_ip,
                          uint16_t src_port,
                          uint16_t dst_port,
-                         void* _data,
-                         uint32_t length ) {
+                         void* data,
+                         size_t length ) {
 
     ////////////////////////
     // ?
@@ -101,13 +101,13 @@ static void rx_callback( uint32_t src_ip,
     // reject tftp packets that we did not originate
     ////////////////////////
 
-    if(dst_port != PORT_IN) return;
+    if(dst_port != KPORT_IN) return;
 
     ////////////////////////
     // get opcode
     ////////////////////////
 
-    auto datau8 = (uint8_t*) _data;
+    auto datau8 = (uint8_t*) data;
     auto opcode = uint16_t(datau8[0] << 8 | datau8[1]);
     auto block = uint16_t(datau8[2] << 8 | datau8[3]);
 
@@ -117,8 +117,8 @@ static void rx_callback( uint32_t src_ip,
 
     switch( opcode ){
         case TFTP_ACK:
-            data_port = src_port;
-            last_ack = block;
+            _data_port = src_port;
+            _last_ack = block;
             return;
         case TFTP_DATA:
             if( block<1 ){
@@ -126,34 +126,31 @@ static void rx_callback( uint32_t src_ip,
             }
             else {
                 length -= 4;
-                int offset = (block-1)*BLOCK_SIZE;
+                int offset = (block-1)*KBLOCK_SIZE;
                 for(uint32_t i=0;i<length;i++)
-                    dst_buffer[offset+i] = datau8[i+4];
-                total_length += length;
-                //////////////////////////
-                //printf("block<%d> offset<%zu> gotlen<%zu> totlen<%zu>\n", block, offset, length, total_length );
+                    _dst_buffer[offset+i] = datau8[i+4];
+                _total_length += length;
                 //////////////////////////
                 // the following is not enough to determine if done
                 //   what happens if the file's size is an integer multiple of BLOCK_SIZE ??
                 //////////////////////////
-                if(length < BLOCK_SIZE)
-                    transfer_finished = true;
+                if(length < KBLOCK_SIZE)
+                    _transfer_finished = true;
                 //////////////////////////
                 // so we also terminate if all expected data has been sent
                 //  and guess this only works if the length is known in advance..
                 //////////////////////////
-                if(expected_length!=0 and total_length==expected_length)
-                    transfer_finished = true;
+                if(_expected_length!=0 and _total_length==_expected_length)
+                    _transfer_finished = true;
                 //////////////////////////
-
-                packet_data = udp::microudp_get_tx_buffer();
-                length = format_ack(packet_data, block);
-                udp::microudp_send(PORT_IN, src_port, length);
+                _packet_data = udp::get_tx_buffer();
+                length = format_ack(_packet_data, block);
+                udp::send(KPORT_IN, src_port, length);
             }
             break;
         case TFTP_ERROR:
-            total_length = -1;
-            transfer_finished = true;
+            _total_length = -1;
+            _transfer_finished = true;
             break;
         default:
             assert(0);
@@ -163,61 +160,53 @@ static void rx_callback( uint32_t src_ip,
 
 /////////////////////////////////////////////////////////
 
-int get( uint32_t ip,
-         uint16_t server_port,
-         c_str_t  filename,
-         uint8_t* outbuffer,
-         uint32_t expected_len ) {
+size_t get( uint32_t ip,
+            uint16_t server_port,
+            cstr_t  filename,
+            void* outbuffer,
+            size_t expected_len ) {
 
-    printf( "tftp_get.a\n");
+    if(!udp::arp_resolve(ip))
+        return STATUS_FETCH_ERR;
 
-    if(!udp::microudp_arp_resolve(ip))
-        return -1;
+    udp::ScopedReceiveCallback callback(rx_callback);
 
-    printf( "tftp_get.b\n");
+    _dst_buffer = (uint8_t*) outbuffer;
 
-    udp::ScopedUdpCallback callback(rx_callback);
-
-    printf( "tftp_get.c\n");
-
-    dst_buffer = outbuffer;
-
-    expected_length = expected_len;
-    total_length = 0;
-    transfer_finished = false;
+    _expected_length = expected_len;
+    _total_length = 0;
+    _transfer_finished = false;
     int tries = 5;
     while(1) {
-        printf( "tftp_get.d\n");
-        packet_data = udp::microudp_get_tx_buffer();
-        int len = format_request(packet_data, TFTP_RRQ, filename);
-        udp::microudp_send(PORT_IN, server_port, len);
-        printf( "tftp_get.e\n");
+        _packet_data = udp::get_tx_buffer();
+        int len = format_request(_packet_data, TFTP_RRQ, filename);
+        udp::send(KPORT_IN, server_port, len);
         for(int i=0;i<2000000;i++) {
             udp::service();
-            if((total_length > 0) or transfer_finished) break;
+            if((_total_length > 0) or _transfer_finished) break;
         }
-        printf( "tftp_get.f\n");
-        if((total_length > 0) or transfer_finished) break;
+        if((_total_length > 0) or _transfer_finished) break;
         tries--;
         if(tries == 0) {
-            return -1;
+            return STATUS_FETCH_ERR;
         }
     }
-    printf( "tftp_get.g\n");
     int i = 12000000;
-    uint32_t length_before = total_length;
-    while(!transfer_finished) {
-        if(length_before != total_length) {
+    uint32_t length_before = _total_length;
+    while(!_transfer_finished) {
+        if(length_before != _total_length) {
             i = 12000000;
-            length_before = total_length;
+            length_before = _total_length;
         }
         if(i-- == 0) {
-            return -1;
+            return STATUS_FETCH_ERR;
         }
         udp::service();
     }
 
-    return int(total_length);
+    return _total_length;
 }
+
+/////////////////////////////////////////////////////////
 
 } //namespace tftp {

@@ -15,7 +15,8 @@ INCDIRS = -I$(BUILDINC_DIRECTORY) \
 	      -I$(SOC_DIRECTORY)/software/include \
 		  -I$(SOC_DIRECTORY)/software/include/base \
 
-CCFLAGS = -D__vexriscv__ -march=rv32im -mabi=ilp32 -N -Os -Wno-builtin-declaration-mismatch
+DEFS = -D__vexriscv__ -D__LOCALIP__=${SOC_TFTP_CLIENT_IP} -D__REMOTEIP__=${SOC_TFTP_SERVER_IP} -D__TFTPPORT__=${SOC_TFTP_SERVER_PORT}
+CCFLAGS = $(DEFS) -march=rv32im -mabi=ilp32 -N -Os -Wno-builtin-declaration-mismatch
 CXXFLAGS = $(CCFLAGS) -std=c++17 -fno-exceptions
 
 ###############################################################################
