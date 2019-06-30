@@ -21,7 +21,7 @@ static auto KMANIFEST_STRING_LOC = (char*) 0xc8000000; // TODO - set from envvar
 static const size_t KMANIFEST_STRING_SIZE = 1024; // 1024 bytes should be enough for everyone
 static const int KLOCALIP[] = {__LOCALIP__};
 static const int KREMOTEIP[] = {__REMOTEIP__};
-static constexpr int KTFTP_SERVER_PORT = __TFTPPORT__; 
+static constexpr int KTFTP_SERVER_PORT = __TFTPPORT__;
 static const uint8_t KMACADDR[6] = {0x10, 0xe2, 0xd5, 0x00, 0x00, 0x00}; // TODO - set from envvar
 ////////////////////////////////////////////////////////////////////////////////
 static void __attribute__((noreturn)) _do_boot(uint32_t r1, uint32_t r2, uint32_t r3, void* addr)
@@ -57,7 +57,7 @@ static size_t _tftp_get_v( uint32_t remote_ip,
             return r;
         }
         else
-            printf("// Unable to download %s over TFTP, retying...\n", filename);
+            printf("// Unable to download %s over TFTP, retrying...\n", filename);
     }
 }
 ////////////////////////////////////////////////////////////////////////////////
