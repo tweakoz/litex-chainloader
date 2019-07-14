@@ -1,9 +1,9 @@
-include ${SOC_BUILD_DIR}/software/include/generated/variables.mak
+include ${SOC_BUILD_DIR}/${FPGAPLAT}/software/include/generated/variables.mak
 include $(SOC_DIRECTORY)/software/common.mak
 
 ###############################################################################
 
-OUTDIR = ${SOC_BUILD_DIR}/software/chainloader
+OUTDIR = ${SOC_BUILD_DIR}/${FPGAPLAT}/software/chainloader
 
 LIBS = -lcompiler_rt -lbase-nofloat
 
