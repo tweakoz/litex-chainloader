@@ -17,7 +17,7 @@ extern "C" {
 ////////////////////////////////////////////////////////////////////////////////
 namespace netboot {
 ////////////////////////////////////////////////////////////////////////////////
-static auto KMANIFEST_STRING_LOC = (char*) 0xc8000000; // TODO - set from envvar
+static auto KMANIFEST_STRING_LOC = (char*) 0x48000000; // TODO - set from envvar
 static const size_t KMANIFEST_STRING_SIZE = 1024; // 1024 bytes should be enough for everyone
 static const int KLOCALIP[] = {__LOCALIP__};
 static const int KREMOTEIP[] = {__REMOTEIP__};
